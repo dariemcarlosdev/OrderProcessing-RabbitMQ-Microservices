@@ -1,5 +1,7 @@
 ﻿# OrderFlow.Core - Order Processing with RabbitMQ Pub/Sub
 
+**Author:** Dariem Carlos Macias
+
 > *"The art of programming is the art of organizing complexity."* — **Edsger W. Dijkstra**
 
 ## 🎯 Project Vision
@@ -828,6 +830,19 @@ This project was crafted with care to demonstrate **best practices**, **clean ar
 **Happy Coding!** ⌨️✨
 
 *If this project helped you in your journey, consider giving it a ⭐ star and sharing it with others who might benefit.*
+
+---
+
+### 👨‍💻 About the Author
+
+**Dariem Carlos Macias**  
+Software Engineer | Distributed Systems Enthusiast
+
+This project represents my journey into the world of event-driven architecture, microservices patterns, and production-ready system design. Every line of code, every architectural decision, and every piece of documentation was crafted with the goal of not just building software, but building understanding.
+
+*"The best way to learn is to teach, and the best way to teach is through code that speaks for itself."*
+
+---
 
 **— Built with .NET 8, RabbitMQ, Docker, and a lot of ☕**
 
