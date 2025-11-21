@@ -42,9 +42,9 @@ public class OrdersController : ControllerBase
     /// <param name="request">The request model containing order details.</param>
     /// <returns>A standardized API response containing the created order details.</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(ApiResponse<CreateResponseDto<Order>>), 200)]
-    [ProducesResponseType(typeof(ApiResponse<CreateResponseDto<Order>>), 500)]
-    public async Task<ActionResult<ApiResponse<CreateResponseDto<Order>>>> CreateOrder([FromBody] CreateOrderRequestDto request)
+    [ProducesResponseType(typeof(ApiResponse<OrderResponseDto>), 200)]
+    [ProducesResponseType(typeof(ApiResponse<OrderResponseDto>), 500)]
+    public async Task<ActionResult<ApiResponse<OrderResponseDto>>> CreateOrder([FromBody] CreateOrderRequestDto request)
     {
         try
         {
@@ -74,11 +74,21 @@ public class OrdersController : ControllerBase
 
             _logger.LogInformation($"Order created successfully: {order.Id}");
 
-            // Use mapping extension to convert domain model to response DTO
-            var responseData = order.ToCreateResponseDto();
+            // Simplified: Map domain model directly to response DTO
+            var responseDto = order.MapTo<Order, OrderResponseDto>( order => new()
+            {
+                Id = order.Id,
+                CustomerName = order.CustomerName,
+                ProductName = order.ProductName,
+                Quantity = order.Quantity,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status.ToString(),
+                CreatedAt = order.CreatedAt
+            });
 
-            var response = ApiResponse<CreateResponseDto<Order>>.SuccessResponse(
-                responseData, 
+
+            var response = ApiResponse<OrderResponseDto>.SuccessResponse(
+                responseDto, 
                 "Order created and published successfully");
 
             return Ok(response);
@@ -87,7 +97,7 @@ public class OrdersController : ControllerBase
         {
             _logger.LogError(ex, "Error creating order");
             
-            var errorResponse = ApiResponse<CreateResponseDto<Order>>.FailureResponse(
+            var errorResponse = ApiResponse<OrderResponseDto>.FailureResponse(
                 "An error occurred while creating the order",
                 ex.Message);
 
