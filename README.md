@@ -73,9 +73,10 @@ This project is designed for **software engineers, architects, and students** wh
 12. [Troubleshooting](#troubleshooting)
 13. [Configuration](#configuration)
 14. [Production Deployment](#production-deployment)
-15. [Next Steps](#next-steps)
-16. [Resources](#resources)
-17. [License](#license)
+15. [📖 Documentation](#-documentation)
+16. [Next Steps](#next-steps)
+17. [Resources](#resources)
+18. [License](#license)
 
 ---
 
@@ -143,7 +144,9 @@ docker-compose logs -f orderflow-core
 docker-compose down
 ```
 
-📖 **For detailed Docker deployment instructions, troubleshooting, and production considerations, see [DOCKER-DEPLOYMENT.md](DOCKER-DEPLOYMENT.md)**
+📖 **For detailed Docker deployment instructions, troubleshooting, and production considerations:**
+- [Docker Deployment Guide](Docs/Containerization/DOCKER-DEPLOYMENT.md)
+- [Docker Containerization Deep Dive](Docs/Containerization/DOCKER-CONTAINERIZE-README.md)
 
 ## Alternative: Local Development Setup
 
@@ -265,6 +268,9 @@ Multiple subscribers listen for specific event types and process them independen
   - `DELETE /api/orders/{id}` → Publishes `order.cancelled` event
 - Creates `Order` and `OrderEvent` objects from requests
 - Uses `IMessagePublisher` to publish events to RabbitMQ
+- Returns consistent `ApiResponse<T>` wrapper for all endpoints
+
+> 📖 **Learn more about the API Response Pattern:** [API Response Pattern Guide](Docs/Patterns/API-RESPONSE-PATTERN.md)
 
 #### 5. Subscription Layer
 
@@ -420,6 +426,19 @@ builder.Services.AddHealthChecks()
 
 ## API Endpoints
 
+All endpoints return a consistent `ApiResponse<T>` wrapper with the following structure:
+
+```json
+{
+  "success": true,
+  "message": "Order created successfully",
+  "data": { ... },
+  "errors": []
+}
+```
+
+> 📖 **Learn more about the API Response Pattern:** [API Response Pattern Guide](Docs/Patterns/API-RESPONSE-PATTERN.md)
+
 ### Create Order
 ```http
 POST /api/orders
@@ -495,6 +514,8 @@ Returns JSON with application health status and RabbitMQ connectivity.
    - Check Exchanges → `order_exchange`
    - Check Queues → See all 4 queues and message flow
 
+> 📖 **For comprehensive testing scenarios and automated test scripts:** [Testing Guide](Docs/Tests/TEST-README.md)
+
 ### Using Local Development
 
 1. Start RabbitMQ (see [Alternative: Local Development Setup](#alternative-local-development-setup))
@@ -528,6 +549,14 @@ OrderFlow.Core/
 │       └── OrderResponseDto.cs
 ├── Controllers/
 │   └── OrdersController.cs
+├── Docs/
+│   ├── Containerization/
+│   │   ├── DOCKER-CONTAINERIZE-README.md
+│   │   └── DOCKER-DEPLOYMENT.md
+│   ├── Patterns/
+│   │   └── API-RESPONSE-PATTERN.md
+│   └── Tests/
+│       └── TEST-README.md
 ├── Infrastructure/
 │   └── RabbitMQ/
 │       ├── IRabbitMqConnectionFactory.cs
@@ -547,12 +576,11 @@ OrderFlow.Core/
 │       └── NotificationSubscriber.cs
 ├── docker-compose.yml
 ├── Dockerfile
+├── Dockerfile.simple
 ├── .dockerignore
 ├── Program.cs
 ├── appsettings.json
-├── API-RESPONSE-PATTERN.md
-├── README.md
-└── DOCKER-DEPLOYMENT.md
+└── README.md
 ```
 
 ## Key Features
@@ -568,6 +596,8 @@ OrderFlow.Core/
 - ✅ Docker Compose support for easy deployment
 - ✅ Health checks for monitoring
 - ✅ Swagger UI for API documentation
+- ✅ Consistent API response wrapper pattern
+- ✅ Comprehensive documentation
 
 ## Monitoring
 
@@ -613,7 +643,7 @@ Check http://localhost:8080/health for:
 - Verify publish folder exists: `ls ./publish`
 - Rebuild: `dotnet publish -c Release -o ./publish && docker-compose up -d --build`
 
-For detailed troubleshooting, see [DOCKER-DEPLOYMENT.md](DOCKER-DEPLOYMENT.md#troubleshooting)
+> 📖 **For detailed troubleshooting and Docker-specific issues:** [Docker Deployment Guide](Docs/Containerization/DOCKER-DEPLOYMENT.md#troubleshooting)
 
 ## Configuration
 
@@ -621,6 +651,8 @@ For detailed troubleshooting, see [DOCKER-DEPLOYMENT.md](DOCKER-DEPLOYMENT.md#tr
 Configuration is managed via environment variables in `docker-compose.yml`:
 - RabbitMQ hostname: `rabbitmq` (Docker service name)
 - Credentials: admin/admin123
+
+> 📖 **For in-depth docker-compose.yml explanation:** [Docker Containerization Guide](Docs/Containerization/DOCKER-CONTAINERIZE-README.md)
 
 ### Local Development Environment
 Configuration is loaded from `appsettings.json`:
@@ -638,7 +670,59 @@ For production deployment considerations, including:
 - Health checks
 - Scaling strategies
 
-See the **Production Considerations** section in [DOCKER-DEPLOYMENT.md](DOCKER-DEPLOYMENT.md#production-considerations)
+> 📖 **See the Production Considerations section in:** [Docker Deployment Guide](Docs/Containerization/DOCKER-DEPLOYMENT.md#production-considerations)
+
+---
+
+## 📖 Documentation
+
+This project includes comprehensive documentation covering all aspects of the system:
+
+### 🐳 **Containerization & Deployment**
+- **[Docker Deployment Guide](Docs/Containerization/DOCKER-DEPLOYMENT.md)**
+  - Quick start with Docker Compose
+  - Environment configuration
+  - Port mappings and networking
+  - Troubleshooting container issues
+  - Production deployment strategies
+
+- **[Docker Containerization Deep Dive](Docs/Containerization/DOCKER-CONTAINERIZE-README.md)**
+  - Complete docker-compose.yml breakdown
+  - Service orchestration explained
+  - Networking architecture
+  - Volume management and persistence
+  - Health checks and dependencies
+  - Container lifecycle management
+  - Advanced scenarios and best practices
+
+### 🎨 **Patterns & Architecture**
+- **[API Response Pattern Guide](Docs/Patterns/API-RESPONSE-PATTERN.md)**
+  - Consistent response wrapper structure
+  - Generic `ApiResponse<T>` implementation
+  - Error handling strategies
+  - Success and failure response examples
+  - Best practices for API design
+
+### 🧪 **Testing**
+- **[Comprehensive Testing Guide](Docs/Tests/TEST-README.md)**
+  - Quick start testing with Swagger UI
+  - Detailed test scenarios for each event type
+  - RabbitMQ Management UI monitoring
+  - Automated test scripts
+  - Troubleshooting test failures
+  - Performance and load testing
+
+### 📚 **Documentation Index**
+
+| Topic | Document | Description |
+|-------|----------|-------------|
+| **Quick Start** | [Main README](README.md) | Getting started, architecture overview |
+| **Docker Deployment** | [DOCKER-DEPLOYMENT.md](Docs/Containerization/DOCKER-DEPLOYMENT.md) | Step-by-step deployment guide |
+| **Docker Architecture** | [DOCKER-CONTAINERIZE-README.md](Docs/Containerization/DOCKER-CONTAINERIZE-README.md) | Deep dive into docker-compose.yml |
+| **API Patterns** | [API-RESPONSE-PATTERN.md](Docs/Patterns/API-RESPONSE-PATTERN.md) | API response design patterns |
+| **Testing** | [TEST-README.md](Docs/Tests/TEST-README.md) | Comprehensive testing guide |
+
+---
 
 ## Next Steps
 
@@ -646,6 +730,8 @@ Consider adding:
 - ✅ **Connection resilience**: ✓ Implemented with retry logic and exponential backoff
 - ✅ **Health checks**: ✓ Implemented with ASP.NET Core health checks
 - ✅ **Docker support**: ✓ Full Docker Compose orchestration
+- ✅ **API Response Pattern**: ✓ Consistent response wrapper implemented
+- ✅ **Comprehensive Documentation**: ✓ Multiple guides covering all aspects
 - **Database persistence**: Store orders in a database (SQL Server, PostgreSQL)
 - **Dead letter queues**: Handle permanently failed messages
 - **Message retry policies**: Enhanced backoff strategies with dead letter exchange
@@ -659,11 +745,18 @@ Consider adding:
 
 ## Resources
 
+### Official Documentation
 - [RabbitMQ Documentation](https://www.rabbitmq.com/documentation.html)
 - [.NET RabbitMQ Client](https://www.rabbitmq.com/dotnet-api-guide.html)
 - [ASP.NET Core Background Services](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Topic Exchange Tutorial](https://www.rabbitmq.com/tutorials/tutorial-five-dotnet.html)
+
+### Project Documentation
+- [Docker Deployment Guide](Docs/Containerization/DOCKER-DEPLOYMENT.md)
+- [Docker Containerization Deep Dive](Docs/Containerization/DOCKER-CONTAINERIZE-README.md)
+- [API Response Pattern Guide](Docs/Patterns/API-RESPONSE-PATTERN.md)
+- [Testing Guide](Docs/Tests/TEST-README.md)
 
 ---
 
@@ -674,9 +767,11 @@ If you're new to these concepts, here's a suggested learning path:
 1. **Start Simple** — Run the project locally and test the `/api/orders` endpoint
 2. **Observe the Flow** — Watch the logs and RabbitMQ Management UI
 3. **Understand Routing** — Experiment with different routing keys
-4. **Modify & Extend** — Add a new subscriber or event type
-5. **Deploy** — Use Docker Compose to experience the full stack
-6. **Optimize** — Implement dead letter queues and retry policies
+4. **Read the Docs** — Explore the [comprehensive documentation](Docs/) for deep dives
+5. **Test Thoroughly** — Use the [Testing Guide](Docs/Tests/TEST-README.md) for scenarios
+6. **Deploy** — Use Docker Compose to experience the full stack
+7. **Containerize** — Learn from [Docker Containerization Guide](Docs/Containerization/DOCKER-CONTAINERIZE-README.md)
+8. **Optimize** — Implement dead letter queues and retry policies
 
 ---
 
