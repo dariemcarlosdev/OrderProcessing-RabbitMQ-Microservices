@@ -578,9 +578,13 @@ OrderFlow.Core/
 │   │   ├── DOCKER-CONTAINERIZE-README.md
 │   │   └── DOCKER-DEPLOYMENT.md
 │   ├── Patterns/
-│   │   └── API-RESPONSE-PATTERN.md
+│   │   ├── API-RESPONSE-PATTERN.md
+│   │   ├── API-RESPONSE-SIMPLIFICATION.md
+│   │   └── GENERIC-MAPPING-EXTENSIONS.md
 │   └── Tests/
 │       └── TEST-README.md
+├── Extensions/
+│   └── MappingExtensions.cs
 ├── Infrastructure/
 │   └── RabbitMQ/
 │       ├── IRabbitMqConnectionFactory.cs
@@ -600,7 +604,6 @@ OrderFlow.Core/
 │       └── NotificationSubscriber.cs
 ├── docker-compose.yml
 ├── Dockerfile
-├── Dockerfile.simple
 ├── .dockerignore
 ├── Program.cs
 ├── appsettings.json
@@ -609,19 +612,19 @@ OrderFlow.Core/
 
 ## Key Features
 
-- ✅ Topic-based routing with RabbitMQ
-- ✅ Multiple subscribers for different order events
-- ✅ Automatic message acknowledgment
-- ✅ Persistent messages
-- ✅ Automatic connection recovery with retry logic
-- ✅ Structured logging
-- ✅ Clean architecture with separation of concerns
-- ✅ Background services for continuous message consumption
-- ✅ Docker Compose support for easy deployment
-- ✅ Health checks for monitoring
-- ✅ Swagger UI for API documentation
-- ✅ Consistent API response wrapper pattern
-- ✅ Comprehensive documentation
+- ✅ **Event-Driven Architecture** — Topic-based routing with RabbitMQ
+- ✅ **Multiple Subscribers** — Different subscribers for different order events
+- ✅ **Reliable Messaging** — Automatic message acknowledgment and persistent messages
+- ✅ **Connection Resilience** — Automatic connection recovery with exponential backoff retry logic
+- ✅ **Clean Architecture** — Separation of concerns and SOLID principles
+- ✅ **Background Services** — Continuous message consumption without blocking HTTP requests
+- ✅ **Docker Compose** — Easy deployment with container orchestration
+- ✅ **Health Monitoring** — ASP.NET Core health checks for RabbitMQ connectivity
+- ✅ **API Documentation** — Interactive Swagger UI
+- ✅ **Generic Response Pattern** — Consistent `ApiResponse<T>` wrapper for all endpoints
+- ✅ **Type-Safe Mapping** — Generic mapping extensions for domain models to DTOs
+- ✅ **Comprehensive Documentation** — Multiple guides covering patterns, deployment, and testing
+- ✅ **Structured Logging** — Detailed logging for debugging and monitoring
 
 ## Monitoring
 
@@ -727,6 +730,19 @@ This project includes comprehensive documentation covering all aspects of the sy
   - Success and failure response examples
   - Best practices for API design
 
+- **[API Response Simplification Guide](Docs/Patterns/API-RESPONSE-SIMPLIFICATION.md)**
+  - Response structure evolution
+  - Before/after comparison
+  - Migration guide for API consumers
+  - Rollback instructions
+
+- **[Generic Mapping Extensions Guide](Docs/Patterns/GENERIC-MAPPING-EXTENSIONS.md)**
+  - Generic `MapTo<TSource, TDestination>` method
+  - Collection mapping with `MapToList`
+  - Type-safe domain model to DTO mapping
+  - Real-world usage examples
+  - Performance considerations
+
 ### 🧪 **Testing**
 - **[Comprehensive Testing Guide](Docs/Tests/TEST-README.md)**
   - Quick start testing with Swagger UI
@@ -744,6 +760,8 @@ This project includes comprehensive documentation covering all aspects of the sy
 | **Docker Deployment** | [DOCKER-DEPLOYMENT.md](Docs/Containerization/DOCKER-DEPLOYMENT.md) | Step-by-step deployment guide |
 | **Docker Architecture** | [DOCKER-CONTAINERIZE-README.md](Docs/Containerization/DOCKER-CONTAINERIZE-README.md) | Deep dive into docker-compose.yml |
 | **API Patterns** | [API-RESPONSE-PATTERN.md](Docs/Patterns/API-RESPONSE-PATTERN.md) | API response design patterns |
+| **API Simplification** | [API-RESPONSE-SIMPLIFICATION.md](Docs/Patterns/API-RESPONSE-SIMPLIFICATION.md) | Response structure evolution guide |
+| **Generic Mapping** | [GENERIC-MAPPING-EXTENSIONS.md](Docs/Patterns/GENERIC-MAPPING-EXTENSIONS.md) | Type-safe domain to DTO mapping |
 | **Testing** | [TEST-README.md](Docs/Tests/TEST-README.md) | Comprehensive testing guide |
 
 ---
@@ -751,21 +769,22 @@ This project includes comprehensive documentation covering all aspects of the sy
 ## Next Steps
 
 Consider adding:
-- ✅ **Connection resilience**: ✓ Implemented with retry logic and exponential backoff
-- ✅ **Health checks**: ✓ Implemented with ASP.NET Core health checks
-- ✅ **Docker support**: ✓ Full Docker Compose orchestration
+- ✅ **Connection Resilience**: ✓ Implemented with retry logic and exponential backoff
+- ✅ **Health Checks**: ✓ Implemented with ASP.NET Core health checks
+- ✅ **Docker Support**: ✓ Full Docker Compose orchestration
 - ✅ **API Response Pattern**: ✓ Consistent response wrapper implemented
+- ✅ **Generic Mapping Extensions**: ✓ Type-safe domain model to DTO mapping
 - ✅ **Comprehensive Documentation**: ✓ Multiple guides covering all aspects
-- **Database persistence**: Store orders in a database (SQL Server, PostgreSQL)
-- **Dead letter queues**: Handle permanently failed messages
-- **Message retry policies**: Enhanced backoff strategies with dead letter exchange
-- **Circuit breaker pattern**: Prevent cascading failures (Polly library)
-- **Unit and integration tests**: Test publishers and subscribers
-- **Metrics and observability**: Prometheus, Grafana, or Application Insights
-- **API authentication**: Add JWT or OAuth2 authentication
-- **Rate limiting**: Protect API endpoints from abuse
+- **Database Persistence**: Store orders in a database (SQL Server, PostgreSQL)
+- **Dead Letter Queues**: Handle permanently failed messages
+- **Message Retry Policies**: Enhanced backoff strategies with dead letter exchange
+- **Circuit Breaker Pattern**: Prevent cascading failures (Polly library)
+- **Unit and Integration Tests**: Test publishers and subscribers
+- **Metrics and Observability**: Prometheus, Grafana, or Application Insights
+- **API Authentication**: Add JWT or OAuth2 authentication
+- **Rate Limiting**: Protect API endpoints from abuse
 - **Idempotency**: Handle duplicate message processing
-- **Event sourcing**: Full event history and replay capability
+- **Event Sourcing**: Full event history and replay capability
 
 ## Resources
 
@@ -780,7 +799,9 @@ Consider adding:
 - [Docker Deployment Guide](Docs/Containerization/DOCKER-DEPLOYMENT.md)
 - [Docker Containerization Deep Dive](Docs/Containerization/DOCKER-CONTAINERIZE-README.md)
 - [API Response Pattern Guide](Docs/Patterns/API-RESPONSE-PATTERN.md)
-- [Testing Guide](Docs/Tests/TEST-README.md)
+- [API Response Simplification Guide](Docs/Patterns/API-RESPONSE-SIMPLIFICATION.md)
+- [Generic Mapping Extensions Guide](Docs/Patterns/GENERIC-MAPPING-EXTENSIONS.md)
+- [Comprehensive Testing Guide](Docs/Tests/TEST-README.md)
 
 ---
 

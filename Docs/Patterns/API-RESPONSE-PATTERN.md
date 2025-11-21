@@ -1,4 +1,4 @@
-# API Response Pattern Documentation
+﻿# API Response Pattern Documentation
 
 ## Overview
 
@@ -45,15 +45,13 @@ The OrderFlow.Core API uses a standardized `ApiResponse<T>` wrapper pattern for 
   "success": true,
   "message": "Order created and published successfully",
   "data": {
-    "order": {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "customerName": "John Doe",
-      "productName": "Laptop",
-      "quantity": 1,
-      "totalAmount": 1299.99,
-      "status": "Created",
-      "createdAt": "2024-01-20T10:30:00Z"
-    }
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "customerName": "John Doe",
+    "productName": "Laptop",
+    "quantity": 1,
+    "totalAmount": 1299.99,
+    "status": "Created",
+    "createdAt": "2024-01-20T10:30:00Z"
   },
   "errors": null,
   "timestamp": "2024-01-20T10:30:00Z"
@@ -97,19 +95,17 @@ The OrderFlow.Core API uses a standardized `ApiResponse<T>` wrapper pattern for 
 
 ### 1. Create Order
 - **Endpoint:** `POST /api/orders`
-- **Success Response:** `ApiResponse<CreateOrderResponseDto>`
+- **Success Response:** `ApiResponse<OrderResponseDto>`
 - **Data Structure:**
   ```typescript
   {
-    order: {
-      id: string (GUID),
-      customerName: string,
-      productName: string,
-      quantity: number,
-      totalAmount: number,
-      status: string,
-      createdAt: DateTime
-    }
+    id: string (GUID),
+    customerName: string,
+    productName: string,
+    quantity: number,
+    totalAmount: number,
+    status: string,
+    createdAt: DateTime
   }
   ```
 
@@ -152,10 +148,6 @@ interface ApiResponse<T> {
   timestamp: string;
 }
 
-interface CreateOrderResponseDto {
-  order: OrderResponseDto;
-}
-
 interface OrderResponseDto {
   id: string;
   customerName: string;
@@ -175,11 +167,11 @@ async function createOrder(orderData: any): Promise<OrderResponseDto | null> {
       body: JSON.stringify(orderData)
     });
 
-    const apiResponse: ApiResponse<CreateOrderResponseDto> = await response.json();
+    const apiResponse: ApiResponse<OrderResponseDto> = await response.json();
 
     if (apiResponse.success) {
       console.log('Success:', apiResponse.message);
-      return apiResponse.data!.order;
+      return apiResponse.data!;
     } else {
       console.error('Failed:', apiResponse.message);
       console.error('Errors:', apiResponse.errors);
@@ -189,6 +181,14 @@ async function createOrder(orderData: any): Promise<OrderResponseDto | null> {
     console.error('Request failed:', error);
     return null;
   }
+}
+
+// Accessing order properties
+const order = await createOrder({ /* ... */ });
+if (order) {
+  console.log(`Order ID: ${order.id}`);
+  console.log(`Customer: ${order.customerName}`);
+  console.log(`Status: ${order.status}`);
 }
 ```
 
@@ -208,12 +208,12 @@ public class ApiResponse<T>
 public async Task<OrderResponseDto?> CreateOrderAsync(CreateOrderRequestDto request)
 {
     var response = await _httpClient.PostAsJsonAsync("/api/orders", request);
-    var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<CreateOrderResponseDto>>();
+    var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<OrderResponseDto>>();
 
     if (apiResponse?.Success == true)
     {
         Console.WriteLine($"Success: {apiResponse.Message}");
-        return apiResponse.Data?.Order;
+        return apiResponse.Data; // Direct access to order data
     }
     else
     {
@@ -230,15 +230,84 @@ public async Task<OrderResponseDto?> CreateOrderAsync(CreateOrderRequestDto requ
 }
 ```
 
+### Python Example
+
+```python
+import requests
+from typing import Optional, Dict, Any
+
+def create_order(order_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """
+    Creates an order and returns the order data if successful.
+    """
+    response = requests.post(
+        'http://localhost:8080/api/orders',
+        json=order_data
+    )
+    
+    api_response = response.json()
+    
+    if api_response['success']:
+        print(f"Success: {api_response['message']}")
+        return api_response['data']  # Direct access to order
+    else:
+        print(f"Failed: {api_response['message']}")
+        if api_response.get('errors'):
+            for error in api_response['errors']:
+                print(f"Error: {error}")
+        return None
+
+# Usage
+order = create_order({
+    'customerName': 'John Doe',
+    'productName': 'Laptop',
+    'quantity': 1,
+    'totalAmount': 1299.99
+})
+
+if order:
+    print(f"Order ID: {order['id']}")
+    print(f"Customer: {order['customerName']}")
+    print(f"Status: {order['status']}")
+```
+
 ## Benefits of This Pattern
 
-? **Consistency**: All endpoints return the same structure  
-? **Predictability**: Clients know exactly what to expect  
-? **Error Handling**: Standardized error reporting with detailed messages  
-? **Type Safety**: Generic type parameter ensures compile-time checking  
-? **Debugging**: Timestamp helps with troubleshooting  
-? **Extensibility**: Easy to add metadata (correlation IDs, trace IDs, etc.)  
-? **API Documentation**: Better Swagger/OpenAPI documentation generation  
+✅ **Consistency**: All endpoints return the same structure  
+✅ **Predictability**: Clients know exactly what to expect  
+✅ **Error Handling**: Standardized error reporting with detailed messages  
+✅ **Type Safety**: Generic type parameter ensures compile-time checking  
+✅ **Debugging**: Timestamp helps with troubleshooting  
+✅ **Extensibility**: Easy to add metadata (correlation IDs, trace IDs, etc.)  
+✅ **API Documentation**: Better Swagger/OpenAPI documentation generation  
+✅ **Simplicity**: Flat data structure for easy access  
+
+## Design Decisions
+
+### ✅ **Simplified Response Structure (v1.1)**
+
+We use a **flat response structure** for the `CreateOrder` endpoint:
+
+```json
+{
+  "success": true,
+  "message": "Order created and published successfully",
+  "data": {
+    "id": "...",
+    "customerName": "...",
+    "productName": "...",
+    // ... direct order properties
+  }
+}
+```
+
+**Benefits:**
+- Easier client-side access (`response.data.id` vs `response.data.model.id`)
+- Consistent with other endpoints
+- Reduced nesting complexity
+- Better developer experience
+
+**See Also:** [API Response Simplification Guide](API-RESPONSE-SIMPLIFICATION.md) for details on this design decision.
 
 ## Adding New Endpoints
 
@@ -285,6 +354,13 @@ public async Task<ActionResult<ApiResponse<YourDataDto>>> ExampleEndpoint([FromB
 
 ## Version History
 
+- **v1.1** - Simplified Create Order response structure (removed `CreateResponseDto` wrapper)
 - **v1.0** - Initial implementation with generic ApiResponse pattern
 - All endpoints migrated to use consistent response structure
 - Added ProducesResponseType attributes for better Swagger documentation
+
+## Related Documentation
+
+- [API Response Simplification Guide](API-RESPONSE-SIMPLIFICATION.md) - Details on response structure simplification
+- [Testing Guide](../Tests/TEST-README.md) - API testing examples
+- [Main README](../../README.md) - Project overview and quick start
